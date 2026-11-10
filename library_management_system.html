@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Libra — Library Management</title>
+<style>
+:root{--navy:#172554;--blue:#3157d5;--pale:#f4f6fb;--ink:#172033;--muted:#718096;--line:#e7ebf3;--white:#fff;--green:#16865b;--orange:#c47718;--red:#c34444}
+*{box-sizing:border-box}body{margin:0;font-family:Inter,Segoe UI,Arial,sans-serif;background:var(--pale);color:var(--ink)}
+.app{display:flex;min-height:100vh}.sidebar{width:245px;background:#111d3d;color:#fff;padding:26px 18px;display:flex;flex-direction:column;gap:28px;flex-shrink:0}
+.brand{font-size:23px;font-weight:800;letter-spacing:.3px;padding:0 12px}.brand span{color:#8ea7ff}.nav-label{font-size:10px;color:#9aa8c8;font-weight:700;letter-spacing:1.5px;padding:0 12px;margin-bottom:8px}
+nav{display:grid;gap:6px}.nav-btn{border:0;background:transparent;color:#c7d0e6;text-align:left;padding:12px;border-radius:9px;font-size:14px;cursor:pointer;display:flex;gap:12px;align-items:center}.nav-btn:hover,.nav-btn.active{background:#263967;color:#fff}.nav-btn.active{box-shadow:inset 3px 0 #8ea7ff}.side-note{margin-top:auto;background:#1c2c53;border-radius:12px;padding:15px;color:#dce5ff;font-size:12px;line-height:1.6}
+main{flex:1;min-width:0;padding:28px 34px}.topbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:28px;gap:16px}.eyebrow{font-size:12px;color:var(--muted);margin-bottom:5px}.topbar h1{font-size:25px;margin:0}.profile{display:flex;align-items:center;gap:10px;font-size:13px;font-weight:650}.avatar{width:38px;height:38px;border-radius:50%;background:#dfe7ff;color:#3157d5;display:grid;place-items:center;font-weight:800}
+.page{display:none}.page.active{display:block}.welcome{background:linear-gradient(110deg,#263e83,#4266d5);color:white;padding:24px 26px;border-radius:15px;margin-bottom:22px;display:flex;justify-content:space-between;align-items:center;gap:18px}.welcome h2{margin:0 0 7px;font-size:20px}.welcome p{margin:0;color:#dbe4ff;font-size:13px}.welcome-mark{font-size:44px;opacity:.9}
+.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:15px;margin-bottom:22px}.stat,.panel{background:#fff;border:1px solid var(--line);border-radius:13px}.stat{padding:18px}.stat-top{display:flex;justify-content:space-between;color:var(--muted);font-size:12px}.stat-icon{width:32px;height:32px;border-radius:9px;background:#eef2ff;display:grid;place-items:center;font-size:16px}.stat strong{display:block;font-size:27px;margin:12px 0 4px}.stat small{color:var(--muted);font-size:11px}
+.panel{padding:19px;margin-bottom:20px}.panel-head{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:16px}.panel h3{margin:0;font-size:16px}.muted{color:var(--muted);font-size:12px}
+.toolbar{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:15px}.search{flex:1;min-width:180px;padding:10px 12px;border:1px solid var(--line);border-radius:8px;font-size:13px;outline:none}.search:focus,input:focus,select:focus{border-color:#8299ee;box-shadow:0 0 0 3px #e9edff}
+.btn{border:0;border-radius:8px;padding:10px 14px;background:var(--blue);color:#fff;font-weight:650;font-size:12px;cursor:pointer}.btn:hover{filter:brightness(.95)}.btn.secondary{background:#eef2ff;color:#3157d5}.btn.danger{background:#fff0f0;color:var(--red)}.btn.small{padding:7px 10px;font-size:11px}
+table{width:100%;border-collapse:collapse;font-size:12px}th{text-align:left;color:#8590a4;font-weight:650;font-size:10px;letter-spacing:.7px;text-transform:uppercase;padding:11px 9px;border-bottom:1px solid var(--line)}td{padding:13px 9px;border-bottom:1px solid #f0f2f7}tr:last-child td{border-bottom:0}.book-title{font-weight:700}.sub{display:block;color:var(--muted);font-size:11px;margin-top:4px}.pill{display:inline-block;padding:5px 8px;border-radius:20px;font-size:10px;font-weight:700}.available{background:#e7f7ef;color:var(--green)}.issued{background:#fff3df;color:var(--orange)}.overdue{background:#ffeded;color:var(--red)}
+.grid-two{display:grid;grid-template-columns:1.4fr 1fr;gap:18px}.activity{display:grid;gap:14px}.activity-item{display:flex;gap:11px;align-items:center;font-size:12px}.dot{width:9px;height:9px;border-radius:50%;background:#6481e8;flex-shrink:0}.activity-item small{display:block;color:var(--muted);margin-top:4px}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:13px}.field{display:grid;gap:6px}.field label{font-size:11px;color:#667085;font-weight:700}.field input,.field select{width:100%;padding:10px;border:1px solid var(--line);border-radius:8px;font-size:13px;outline:none;background:white}.form-actions{display:flex;gap:9px;justify-content:flex-end;margin-top:17px}
+.empty{text-align:center;padding:30px;color:var(--muted);font-size:13px}.mobile-menu{display:none}
+@media(max-width:950px){.sidebar{width:205px}.stats{grid-template-columns:repeat(2,1fr)}main{padding:24px}.grid-two{grid-template-columns:1fr}}
+@media(max-width:650px){.app{display:block}.sidebar{width:100%;padding:14px;gap:12px}.brand{padding:0 5px}.sidebar .nav-label,.side-note{display:none}nav{display:flex;overflow:auto}.nav-btn{white-space:nowrap;padding:10px}.nav-btn span:first-child{display:none}main{padding:20px 14px}.topbar h1{font-size:21px}.profile{display:none}.welcome{padding:19px}.welcome-mark{display:none}.stats{gap:9px}.stat{padding:13px}.stat strong{font-size:23px}.panel{padding:14px;overflow-x:auto}.form-grid{grid-template-columns:1fr}table{min-width:560px}}
+</style>
+</head>
+<body>
+<div class="app">
+<aside class="sidebar">
+  <div class="brand">LIB<span>RA.</span></div>
+  <div>
+    <div class="nav-label">WORKSPACE</div>
+    <nav>
+      <button class="nav-btn active" data-page="dashboard"><span>▦</span> Dashboard</button>
+      <button class="nav-btn" data-page="books"><span>▤</span> Books</button>
+      <button class="nav-btn" data-page="members"><span>♙</span> Members</button>
+      <button class="nav-btn" data-page="loans"><span>⇄</span> Issue & Return</button>
+    </nav>
+  </div>
+  <div class="side-note"><strong>Library tip</strong><br>Keep book records up to date and process returns promptly to help everyone find what they need.</div>
+</aside>
+<main>
+  <header class="topbar"><div><div class="eyebrow">LIBRARY ADMINISTRATION / <span id="crumb">OVERVIEW</span></div><h1 id="pageTitle">Dashboard</h1></div><div class="profile"><div class="avatar">AD</div><div>Administrator<div class="muted">Library manager</div></div></div></header>
+
+  <section class="page active" id="dashboard">
+    <div class="welcome"><div><h2>Good day, Administrator 👋</h2><p>Here’s what’s happening in your library today.</p></div><div class="welcome-mark">📚</div></div>
+    <div class="stats">
+      <div class="stat"><div class="stat-top">Total books <span class="stat-icon">📚</span></div><strong id="totalBooks">0</strong><small>Titles in your collection</small></div>
+      <div class="stat"><div class="stat-top">Registered members <span class="stat-icon">♙</span></div><strong id="totalMembers">0</strong><small>Active library members</small></div>
+      <div class="stat"><div class="stat-top">Books issued <span class="stat-icon">↗</span></div><strong id="totalIssued">0</strong><small>Currently borrowed</small></div>
+      <div class="stat"><div class="stat-top">Available copies <span class="stat-icon">✓</span></div><strong id="totalAvailable">0</strong><small>Ready to borrow</small></div>
+    </div>
+    <div class="grid-two">
+      <div class="panel"><div class="panel-head"><h3>Recent book records</h3><button class="btn secondary small" onclick="showPage('books')">View all</button></div><div id="recentBooks"></div></div>
+      <div class="panel"><div class="panel-head"><h3>Quick activity</h3><span class="muted">Latest actions</span></div><div class="activity" id="activity"></div></div>
+    </div>
+  </section>
+
+  <section class="page" id="books">
+    <div class="panel"><div class="panel-head"><h3>Book collection</h3><button class="btn" onclick="openModal('book')">＋ Add book</button></div>
+      <div class="toolbar"><input class="search" id="bookSearch" placeholder="Search by title, author or category…" oninput="renderBooks()"></div>
+      <div id="booksTable"></div>
+    </div>
+  </section>
+
+  <section class="page" id="members">
+    <div class="panel"><div class="panel-head"><h3>Library members</h3><button class="btn" onclick="openModal('member')">＋ Add member</button></div>
+      <div class="toolbar"><input class="search" id="memberSearch" placeholder="Search members by name or email…" oninput="renderMembers()"></div>
+      <div id="membersTable"></div>
+    </div>
+  </section>
+
+  <section class="page" id="loans">
+    <div class="panel"><div class="panel-head"><h3>Issue & return books</h3><button class="btn" onclick="openModal('loan')">＋ Issue a book</button></div>
+      <div class="toolbar"><input class="search" id="loanSearch" placeholder="Search by book or member…" oninput="renderLoans()"></div>
+      <div id="loansTable"></div>
+    </div>
+  </section>
+</main>
+</div>
+
+<div id="modal" style="display:none;position:fixed;inset:0;background:#101a3580;z-index:5;align-items:center;justify-content:center;padding:16px">
+ <div class="panel" style="width:min(500px,100%);max-height:90vh;overflow:auto;box-shadow:0 20px 70px #0c173544">
+  <div class="panel-head"><h3 id="modalTitle">Add record</h3><button class="btn secondary small" onclick="closeModal()">✕</button></div>
+  <form id="recordForm"><div id="formFields" class="form-grid"></div><div class="form-actions"><button type="button" class="btn secondary" onclick="closeModal()">Cancel</button><button class="btn" type="submit">Save record</button></div></form>
+ </div>
+</div>
+<script>
+const starterBooks=[
+{id:1,title:"The Great Gatsby",author:"F. Scott Fitzgerald",category:"Classic Fiction",copies:4},
+{id:2,title:"Atomic Habits",author:"James Clear",category:"Self Development",copies:6},
+{id:3,title:"Clean Code",author:"Robert C. Martin",category:"Technology",copies:3},
+{id:4,title:"The Alchemist",author:"Paulo Coelho",category:"Fiction",copies:5},
+{id:5,title:"A Brief History of Time",author:"Stephen Hawking",category:"Science",copies:2}
+];
+const starterMembers=[
+{id:1,name:"Ayesha Rahman",email:"ayesha@example.com",phone:"01700000001"},
+{id:2,name:"Tanvir Hasan",email:"tanvir@example.com",phone:"01700000002"},
+{id:3,name:"Nusrat Jahan",email:"nusrat@example.com",phone:"01700000003"}
+];
+let books=load("libra_books",starterBooks),members=load("libra_members",starterMembers),loans=load("libra_loans",[]),activity=load("libra_activity",[{text:"Welcome to your new library workspace",time:"Just now"}]),modalType="";
+function load(k,fallback){try{let v=localStorage.getItem(k);return v?JSON.parse(v):fallback}catch{return fallback}}
+function save(){localStorage.setItem("libra_books",JSON.stringify(books));localStorage.setItem("libra_members",JSON.stringify(members));localStorage.setItem("libra_loans",JSON.stringify(loans));localStorage.setItem("libra_activity",JSON.stringify(activity))}
+function log(text){activity.unshift({text,time:new Date().toLocaleString()});activity=activity.slice(0,8);save();renderDashboard()}
+function esc(s){return String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
+function available(b){return Math.max(0,b.copies-loans.filter(l=>l.bookId===b.id&&!l.returned).length)}
+function showPage(page){document.querySelectorAll(".page").forEach(p=>p.classList.toggle("active",p.id===page));document.querySelectorAll(".nav-btn").forEach(b=>b.classList.toggle("active",b.dataset.page===page));let names={dashboard:"Dashboard",books:"Books",members:"Members",loans:"Issue & Return"};document.getElementById("pageTitle").textContent=names[page];document.getElementById("crumb").textContent=names[page].toUpperCase();if(page==="books")renderBooks();if(page==="members")renderMembers();if(page==="loans")renderLoans()}
+document.querySelectorAll(".nav-btn").forEach(b=>b.addEventListener("click",()=>showPage(b.dataset.page)));
+function renderDashboard(){
+document.getElementById("totalBooks").textContent=books.reduce((n,b)=>n+b.copies,0);
+document.getElementById("totalMembers").textContent=members.length;
+document.getElementById("totalIssued").textContent=loans.filter(l=>!l.returned).length;
+document.getElementById("totalAvailable").textContent=books.reduce((n,b)=>n+available(b),0);
+document.getElementById("recentBooks").innerHTML=books.slice(-4).reverse().map(b=>`<div style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid #f0f2f7"><div><b class="book-title">${esc(b.title)}</b><span class="sub">${esc(b.author)}</span></div><span class="pill ${available(b)?"available":"issued"}">${available(b)} available</span></div>`).join("")||'<div class="empty">No books added yet.</div>';
+document.getElementById("activity").innerHTML=activity.slice(0,5).map(a=>`<div class="activity-item"><span class="dot"></span><div>${esc(a.text)}<small>${esc(a.time)}</small></div></div>`).join("");
+}
+function renderBooks(){let q=(document.getElementById("bookSearch")?.value||"").toLowerCase();let rows=books.filter(b=>(b.title+" "+b.author+" "+b.category).toLowerCase().includes(q));document.getElementById("booksTable").innerHTML=rows.length?`<table><thead><tr><th>Book</th><th>Category</th><th>Copies</th><th>Availability</th><th>Action</th></tr></thead><tbody>${rows.map(b=>`<tr><td><span class="book-title">${esc(b.title)}</span><span class="sub">${esc(b.author)}</span></td><td>${esc(b.category)}</td><td>${b.copies}</td><td><span class="pill ${available(b)?"available":"issued"}">${available(b)} available</span></td><td><button class="btn danger small" onclick="deleteBook(${b.id})">Delete</button></td></tr>`).join("")}</tbody></table>`:'<div class="empty">No matching books found.</div>'}
+function renderMembers(){let q=(document.getElementById("memberSearch")?.value||"").toLowerCase();let rows=members.filter(m=>(m.name+" "+m.email).toLowerCase().includes(q));document.getElementById("membersTable").innerHTML=rows.length?`<table><thead><tr><th>Member</th><th>Email</th><th>Phone</th><th>Action</th></tr></thead><tbody>${rows.map(m=>`<tr><td class="book-title">${esc(m.name)}</td><td>${esc(m.email)}</td><td>${esc(m.phone)}</td><td><button class="btn danger small" onclick="deleteMember(${m.id})">Delete</button></td></tr>`).join("")}</tbody></table>`:'<div class="empty">No matching members found.</div>'}
+function renderLoans(){let q=(document.getElementById("loanSearch")?.value||"").toLowerCase();let rows=loans.filter(l=>{let b=books.find(x=>x.id===l.bookId),m=members.find(x=>x.id===l.memberId);return ((b?.title||"")+" "+(m?.name||"")).toLowerCase().includes(q)});document.getElementById("loansTable").innerHTML=rows.length?`<table><thead><tr><th>Book</th><th>Member</th><th>Issue date</th><th>Due date</th><th>Status / action</th></tr></thead><tbody>${rows.map(l=>{let b=books.find(x=>x.id===l.bookId),m=members.find(x=>x.id===l.memberId),late=!l.returned&&new Date(l.due)<new Date(new Date().toDateString());return `<tr><td class="book-title">${esc(b?.title||"Deleted book")}</td><td>${esc(m?.name||"Deleted member")}</td><td>${esc(l.issue)}</td><td>${esc(l.due)}</td><td>${l.returned?'<span class="pill available">Returned</span>':late?'<button class="btn danger small" onclick="returnBook('+l.id+')">Overdue · Return</button>':'<button class="btn secondary small" onclick="returnBook('+l.id+')">Return book</button>'}</td></tr>`}).join("")}</tbody></table>`:'<div class="empty">No borrowing records yet. Issue a book to get started.</div>'}
+function openModal(type){modalType=type;let fields="",title="";
+if(type==="book"){title="Add a new book";fields=field("title","Book title","text",true)+field("author","Author","text",true)+field("category","Category","text",true)+field("copies","Number of copies","number",true,"1")}
+if(type==="member"){title="Register a member";fields=field("name","Full name","text",true)+field("email","Email address","email",true)+field("phone","Phone number","tel",true)}
+if(type==="loan"){title="Issue a book";let bs=books.filter(b=>available(b)>0),ms=members;fields=`<div class="field" style="grid-column:1/-1"><label>BOOK</label><select name="bookId" required>${bs.map(b=>`<option value="${b.id}">${esc(b.title)} (${available(b)} available)</option>`).join("")}</select></div><div class="field" style="grid-column:1/-1"><label>MEMBER</label><select name="memberId" required>${ms.map(m=>`<option value="${m.id}">${esc(m.name)}</option>`).join("")}</select></div>`+field("due","Due date","date",true,new Date(Date.now()+14*86400000).toISOString().slice(0,10));if(!bs.length||!ms.length){alert(!bs.length?"No available books. Add books or process a return first.":"Add a member before issuing a book.");return}}
+document.getElementById("modalTitle").textContent=title;document.getElementById("formFields").innerHTML=fields;document.getElementById("modal").style.display="flex";document.getElementById("recordForm").reset()}
+function field(name,label,type,required,placeholder=""){return `<div class="field"><label>${label.toUpperCase()}</label><input name="${name}" type="${type}" ${required?"required":""} ${placeholder?`value="${placeholder}"`:""} ${type==="number"?'min="1"':""}></div>`}
+function closeModal(){document.getElementById("modal").style.display="none"}
+document.getElementById("recordForm").addEventListener("submit",e=>{e.preventDefault();let d=Object.fromEntries(new FormData(e.target));
+if(modalType==="book"){books.push({id:Date.now(),title:d.title.trim(),author:d.author.trim(),category:d.category.trim(),copies:Number(d.copies)});log("Added book: "+d.title)}
+if(modalType==="member"){if(members.some(m=>m.email.toLowerCase()===d.email.toLowerCase())){alert("A member with this email already exists.");return}members.push({id:Date.now(),name:d.name.trim(),email:d.email.trim(),phone:d.phone.trim()});log("Registered member: "+d.name)}
+if(modalType==="loan"){let book=books.find(b=>b.id===Number(d.bookId));if(!book||!available(book)){alert("No copies available.");return}let issue=new Date().toISOString().slice(0,10);loans.push({id:Date.now(),bookId:book.id,memberId:Number(d.memberId),issue,due:d.due,returned:false});log("Issued "+book.title)}
+save();closeModal();renderAll()});
+function deleteBook(id){if(loans.some(l=>l.bookId===id&&!l.returned)){alert("Return all copies before deleting this book.");return}if(confirm("Delete this book record?")){let b=books.find(x=>x.id===id);books=books.filter(x=>x.id!==id);log("Deleted book: "+b.title);renderAll()}}
+function deleteMember(id){if(loans.some(l=>l.memberId===id&&!l.returned)){alert("This member has an active loan. Process the return first.");return}if(confirm("Delete this member?")){let m=members.find(x=>x.id===id);members=members.filter(x=>x.id!==id);log("Deleted member: "+m.name);renderAll()}}
+function returnBook(id){let l=loans.find(x=>x.id===id);if(l&&!l.returned){l.returned=true;let b=books.find(x=>x.id===l.bookId);log("Returned "+(b?.title||"a book"));renderAll()}}
+function renderAll(){renderDashboard();renderBooks();renderMembers();renderLoans()}
+renderAll();
+</script>
+</body>
+</html>
